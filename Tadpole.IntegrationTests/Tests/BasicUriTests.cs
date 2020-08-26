@@ -3,7 +3,7 @@ using Shouldly;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Tadpole.IntegrationTests
+namespace Tadpole.IntegrationTests.Tests
 {
     [TestFixture]
     public class BasicUriTests
