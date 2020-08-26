@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tadpole.Web", "Tadpole.Web\Tadpole.Web.csproj", "{503C01E6-EF2E-4B62-8412-B04DA0F0820C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tadpole.IntegrationTests", "Tadpole.IntegrationTests\Tadpole.IntegrationTests.csproj", "{B7C182AF-DE82-443D-9B26-862254820086}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{503C01E6-EF2E-4B62-8412-B04DA0F0820C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{503C01E6-EF2E-4B62-8412-B04DA0F0820C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{503C01E6-EF2E-4B62-8412-B04DA0F0820C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{503C01E6-EF2E-4B62-8412-B04DA0F0820C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7C182AF-DE82-443D-9B26-862254820086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C182AF-DE82-443D-9B26-862254820086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C182AF-DE82-443D-9B26-862254820086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C182AF-DE82-443D-9B26-862254820086}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E421B23-1C9A-4BE0-BF4F-561D5F252528}
+	EndGlobalSection
+EndGlobal
