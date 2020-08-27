@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tadpole.Web", "Tadpole.Web\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tadpole.IntegrationTests", "Tadpole.IntegrationTests\Tadpole.IntegrationTests.csproj", "{B7C182AF-DE82-443D-9B26-862254820086}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tadpole.Web.UnitTests", "Tadpole.Web.UnitTests\Tadpole.Web.UnitTests.csproj", "{E9B14E13-8968-4402-A078-F4847CFD3EDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B7C182AF-DE82-443D-9B26-862254820086}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7C182AF-DE82-443D-9B26-862254820086}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7C182AF-DE82-443D-9B26-862254820086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9B14E13-8968-4402-A078-F4847CFD3EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9B14E13-8968-4402-A078-F4847CFD3EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9B14E13-8968-4402-A078-F4847CFD3EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9B14E13-8968-4402-A078-F4847CFD3EDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
