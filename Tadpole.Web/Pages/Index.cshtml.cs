@@ -1,15 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using Tadpole.Web.Services;
 
 namespace Tadpole.Web.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly IEncryption _encryption;
+        private readonly IRegister _register;
+
+        public IndexModel(IEncryption encryption, IRegister register)
+        {
+            _encryption = encryption;
+            _register = register;
+        }
+
+
         public bool IsRegistered { get; set; }
 
         public class RegistrationModel
@@ -39,7 +46,17 @@ namespace Tadpole.Web.Pages
             }
 
             //TODO: check for duplicate emails
-            //TODO: save user to database with encrypted password
+
+            //encrypt password ASAP to reduce risk of plain text passwords creeping up the stack
+            var encryptionResult = _encryption.Encrypt(Input.Password);
+
+            RegistrationUser registrationUser = new RegistrationUser { 
+                Email = Input.Email,
+                PasswordHash = encryptionResult.Hash,
+                PasswordSalt = encryptionResult.Salt
+            };
+
+            _register.Save(registrationUser);
 
             IsRegistered = true;
 
