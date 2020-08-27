@@ -35,5 +35,18 @@ namespace Tadpole.Web.Services
 
             return result;
         }
+
+        public bool Verify(string valueToVerify, string originalHash, string originalSalt)
+        {
+            string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: valueToVerify,
+                salt: System.Convert.FromBase64String(originalSalt),
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8
+                ));
+
+            return originalHash == hashedPassword;
+        }
     }
 }
