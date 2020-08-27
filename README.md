@@ -12,9 +12,12 @@ The rest of the code is my fault.
 
 ## Database Notes
 
-The SQL to create the only table in this project can be found in Tadpole.Database\Tables\RegisteredUser.sql
-The web project uses a SQL Server database called Tadpole.Database
-The integration test project uses its own database called Tadpole.Test.Database
-Please create both databases on (localdb)\MSSQLLocalDB and add the RegisteredUser table
+The SQL to create the only table in this project can be found in [Tadpole.Database\Tables\RegisteredUser.sql](https://github.com/PhilipBathe/tadpole/blob/master/Tadpole.Database/Tables/RegisteredUser.sql).
+
+The web project uses a SQL Server database called Tadpole.Database.
+
+The integration test project uses its own database called Tadpole.Test.Database.
+
+Please create both databases on (localdb)\MSSQLLocalDB and add the RegisteredUser table.
 
 Having a dedicated integration test database helps to prevent a developer from breaking the integration tests whilst conducting their own black box tests.
