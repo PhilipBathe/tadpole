@@ -3,9 +3,12 @@ using AngleSharp.Html.Dom;
 using NUnit.Framework;
 using Shouldly;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Tadpole.IntegrationTests.Helpers;
+
 
 namespace Tadpole.IntegrationTests.Tests
 {
@@ -31,6 +34,24 @@ namespace Tadpole.IntegrationTests.Tests
             var registerPage = await _client.GetAsync("/");
             var doc = await HtmlHelpers.GetDocumentAsync(registerPage);
             _form = (IHtmlFormElement)doc.QuerySelector("form");
+        }
+
+        [TearDown]
+        public async Task TearDown()
+        {
+            using (SqlConnection connection = new SqlConnection(Config.TestDatabaseConnectionString))
+            {
+                string sql = $"DELETE FROM RegisteredUser";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
         }
 
         [Test]
@@ -164,6 +185,43 @@ namespace Tadpole.IntegrationTests.Tests
             string errorMessage = "Password must be between 12 and 100 characters long.";
 
             await inputFailedCustomValidation(responseMessage, id, errorMessage);
+        }
+
+        [Test]
+        public async Task ShouldNotRegisterSameEmailTwice()
+        {
+            // Arrange
+            var formDictionary = new Dictionary<string, string>
+            {
+                ["Input_Email"] = validEmail,
+                ["Input_Password"] = validPassword
+            };
+
+            // Act
+            await _client.SendAsync(_form, formDictionary);
+            var responseMessage = await _client.SendAsync(_form, formDictionary);
+
+            // Assert
+            responseMessage.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+
+            int matchedEmails = 0;
+
+            using (SqlConnection connection = new SqlConnection(Config.TestDatabaseConnectionString))
+            {
+                string sql = $"SELECT COUNT(1) FROM RegisteredUser WHERE Email LIKE @email";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    command.Parameters.AddWithValue("@email", validEmail);
+
+                    connection.Open();
+                    matchedEmails = (int)command.ExecuteScalar();
+                    connection.Close();
+                }
+            }
+
+            matchedEmails.ShouldBe(1);
         }
 
         #region form validation helper methods

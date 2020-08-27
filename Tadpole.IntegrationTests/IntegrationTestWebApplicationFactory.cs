@@ -1,17 +1,29 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace Tadpole.IntegrationTests
 {
     public class IntegrationTestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup: class
     {
+        
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(services =>
+            builder.ConfigureAppConfiguration((context, configBuilder) =>
             {
-                var sp = services.BuildServiceProvider();
+                configBuilder.AddInMemoryCollection(
+                    new Dictionary<string, string>
+                    {
+                        ["ConnectionStrings:TadpoleConnection"] = Config.TestDatabaseConnectionString
+                    });
             });
         }
     }
+
+    public static class Config
+    {
+        public static string TestDatabaseConnectionString = "Server=(localdb)\\MSSQLLocalDB;Database=Tadpole.Test.Database;Trusted_Connection=True;MultipleActiveResultSets=true";
+    }
+
 }

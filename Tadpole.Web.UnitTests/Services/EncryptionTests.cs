@@ -35,7 +35,7 @@ namespace Tadpole.Web.UnitTests.Services
             var secondResult = sut.Encrypt(constantPassword);
 
             //Assert
-            firstResult.Salt.ShouldNotMatch(secondResult.Salt);
+            firstResult.Salt.ShouldNotBeSameAs(secondResult.Salt);
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace Tadpole.Web.UnitTests.Services
             var secondResult = sut.Encrypt(constantPassword);
 
             //Assert
-            firstResult.Hash.ShouldNotMatch(secondResult.Hash);
+            firstResult.Hash.ShouldNotBeSameAs(secondResult.Hash);
         }
 
         [Test]

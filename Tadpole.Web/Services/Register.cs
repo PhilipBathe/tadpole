@@ -13,6 +13,28 @@ namespace Tadpole.Web.Services
             _connectionString = configuration.GetConnectionString("TadpoleConnection");
         }
 
+        public bool IsEmailAlreadyRegistered(string email)
+        {
+            int matchedEmails = 0;
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = $"SELECT COUNT(1) FROM RegisteredUser WHERE Email LIKE @email";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    command.Parameters.AddWithValue("@email", email);
+
+                    connection.Open();
+                    matchedEmails = (int)command.ExecuteScalar();
+                    connection.Close();
+                }
+            }
+
+            return matchedEmails > 0;
+        }
+
         public void Save(RegistrationUser user)
         {
             //specifically asked to use plain ADO.Net - I'd rather have used Dapper :-)

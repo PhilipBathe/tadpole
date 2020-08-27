@@ -45,7 +45,13 @@ namespace Tadpole.Web.Pages
                 return Page();
             }
 
-            //TODO: check for duplicate emails
+            if (_register.IsEmailAlreadyRegistered(Input.Email))
+            {
+                //don't tell the current user this email is already registered in case they are a malicious user snoping
+                //TODO: send email to user informing them of an attempt to register again with help to login/reset password etc.
+                IsRegistered = true;
+                return Page();
+            }
 
             //encrypt password ASAP to reduce risk of plain text passwords creeping up the stack
             var encryptionResult = _encryption.Encrypt(Input.Password);
