@@ -23,6 +23,7 @@ namespace Tadpole.IntegrationTests
 
     public static class Config
     {
+        //TODO: move this into config file
         public static string TestDatabaseConnectionString = "Server=(localdb)\\MSSQLLocalDB;Database=Tadpole.Test.Database;Trusted_Connection=True;MultipleActiveResultSets=true";
     }
 

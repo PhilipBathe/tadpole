@@ -3,18 +3,18 @@ using AngleSharp.Html.Dom;
 using NUnit.Framework;
 using Shouldly;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Tadpole.IntegrationTests.Data;
 using Tadpole.IntegrationTests.Helpers;
-
 
 namespace Tadpole.IntegrationTests.Tests
 {
     [TestFixture]
     public class RegisterTests
     {
+        private IRegisterTestData _registerTestData;
+
         private HttpClient _client;
         private IHtmlFormElement _form;
 
@@ -24,8 +24,9 @@ namespace Tadpole.IntegrationTests.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var _factory = new IntegrationTestWebApplicationFactory<Tadpole.Web.Startup>();
-            _client = _factory.CreateClient();
+            var factory = new IntegrationTestWebApplicationFactory<Tadpole.Web.Startup>();
+            _client = factory.CreateClient();
+            _registerTestData = new RegisterTestData();
         }
 
         [SetUp]
@@ -37,21 +38,9 @@ namespace Tadpole.IntegrationTests.Tests
         }
 
         [TearDown]
-        public async Task TearDown()
+        public void TearDown()
         {
-            using (SqlConnection connection = new SqlConnection(Config.TestDatabaseConnectionString))
-            {
-                string sql = $"DELETE FROM RegisteredUser";
-
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    command.CommandType = CommandType.Text;
-
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                    connection.Close();
-                }
-            }
+            _registerTestData.WipeAll();
         }
 
         [Test]
@@ -204,22 +193,7 @@ namespace Tadpole.IntegrationTests.Tests
             // Assert
             responseMessage.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
-            int matchedEmails = 0;
-
-            using (SqlConnection connection = new SqlConnection(Config.TestDatabaseConnectionString))
-            {
-                string sql = $"SELECT COUNT(1) FROM RegisteredUser WHERE Email LIKE @email";
-
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    command.CommandType = CommandType.Text;
-                    command.Parameters.AddWithValue("@email", validEmail);
-
-                    connection.Open();
-                    matchedEmails = (int)command.ExecuteScalar();
-                    connection.Close();
-                }
-            }
+            int matchedEmails = _registerTestData.GetCountByEmail(validEmail);
 
             matchedEmails.ShouldBe(1);
         }
