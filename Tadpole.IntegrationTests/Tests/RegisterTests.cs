@@ -15,6 +15,9 @@ namespace Tadpole.IntegrationTests.Tests
         private HttpClient _client;
         private IHtmlFormElement _form;
 
+        private const string validEmail = "happy@path.com";
+        private const string validPassword = "Aa1!passwordshhhhh";
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -36,8 +39,8 @@ namespace Tadpole.IntegrationTests.Tests
             // Arrange
             var formDictionary = new Dictionary<string, string>
             {
-                ["Input_Email"] = "happy@path.com",
-                ["Input_Password"] = "Aa1!passwordshhhhh"
+                ["Input_Email"] = validEmail,
+                ["Input_Password"] = validPassword
             };
 
             // Act
@@ -59,7 +62,7 @@ namespace Tadpole.IntegrationTests.Tests
             var formDictionary = new Dictionary<string, string>
             {
                 ["Input_Email"] = "",
-                ["Input_Password"] = "Aa1!passwordshhhhh"
+                ["Input_Password"] = validPassword
             };
 
             // Act
@@ -70,6 +73,7 @@ namespace Tadpole.IntegrationTests.Tests
 
             string id = "Input_Email";
             string label = "Email";
+
             await inputFailedRequiredValidation(responseMessage, id, label);
         }
 
@@ -79,7 +83,7 @@ namespace Tadpole.IntegrationTests.Tests
             // Arrange
             var formDictionary = new Dictionary<string, string>
             {
-                ["Input_Email"] = "happy@path.com",
+                ["Input_Email"] = validEmail,
                 ["Input_Password"] = ""
             };
 
@@ -91,17 +95,105 @@ namespace Tadpole.IntegrationTests.Tests
 
             string id = "Input_Password";
             string label = "Password";
+
             await inputFailedRequiredValidation(responseMessage, id, label);
         }
 
-        private static async Task inputFailedRequiredValidation(HttpResponseMessage responseMessage, string id, string label)
+        //We are using the built in email validation so no need to explore all of the possible bad email address variations
+        [Test]
+        public async Task InvalidEmailShouldReturnValidationError()
+        {
+            // Arrange
+            var formDictionary = new Dictionary<string, string>
+            {
+                ["Input_Email"] = "wibble",
+                ["Input_Password"] = validPassword
+            };
+
+            // Act
+            var responseMessage = await _client.SendAsync(_form, formDictionary);
+
+            // Assert
+            responseMessage.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+
+            string id = "Input_Email";
+            string label = "Email";
+
+            await inputFailedEmailValidation(responseMessage, id, label);
+        }
+
+        [Test]
+        public async Task ShortPasswordShouldReturnValidationError()
+        {
+            // Arrange
+            var formDictionary = new Dictionary<string, string>
+            {
+                ["Input_Email"] = validEmail,
+                ["Input_Password"] = "Aa1!"
+            };
+
+            // Act
+            var responseMessage = await _client.SendAsync(_form, formDictionary);
+
+            // Assert
+            responseMessage.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+
+            string id = "Input_Password";
+            string errorMessage = "Password must be between 12 and 100 characters long.";
+
+            await inputFailedCustomValidation(responseMessage, id, errorMessage);
+        }
+
+        [Test]
+        public async Task LongPasswordShouldReturnValidationError()
+        {
+            // Arrange
+            var formDictionary = new Dictionary<string, string>
+            {
+                ["Input_Email"] = validEmail,
+                ["Input_Password"] = "Aa1!123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
+            };
+
+            // Act
+            var responseMessage = await _client.SendAsync(_form, formDictionary);
+
+            // Assert
+            responseMessage.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+
+            string id = "Input_Password";
+            string errorMessage = "Password must be between 12 and 100 characters long.";
+
+            await inputFailedCustomValidation(responseMessage, id, errorMessage);
+        }
+
+        #region form validation helper methods
+
+        //move these to a helper class if we ever need to check validation in another form
+
+        private static async Task inputFailedCustomValidation(HttpResponseMessage responseMessage, string id, string errorMessage)
         {
             var resultDoc = await HtmlHelpers.GetDocumentAsync(responseMessage);
             var invalidInputElement = resultDoc.QuerySelector($"#{id}");
             invalidInputElement.ClassList.ShouldContain("input-validation-error");
 
             var invalidValidationMessageElement = resultDoc.QuerySelector($"#{id} + span");
-            invalidValidationMessageElement.Text().ShouldBe($"The {label} field is required.");
+            invalidValidationMessageElement.Text().ShouldBe(errorMessage);
         }
+
+        private static async Task inputFailedRequiredValidation(HttpResponseMessage responseMessage, string id, string label)
+        {
+            string errorMessage = $"The {label} field is required.";
+
+            await inputFailedCustomValidation(responseMessage, id, errorMessage);
+        }
+
+        private static async Task inputFailedEmailValidation(HttpResponseMessage responseMessage, string id, string label)
+        {
+            string errorMessage = $"The {label} field is not a valid e-mail address.";
+
+            await inputFailedCustomValidation(responseMessage, id, errorMessage);
+        }
+
+        #endregion
     }
 }

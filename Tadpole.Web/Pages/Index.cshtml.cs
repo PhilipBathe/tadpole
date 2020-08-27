@@ -14,12 +14,13 @@ namespace Tadpole.Web.Pages
 
         public class RegistrationModel
         {
-            //TODO: validate email
             [Required]
+            [EmailAddress]
             public string Email { get; set; }
 
-            //TODO: min/max lengths
             [Required]
+            [DataType(DataType.Password)]
+            [StringLength(100, MinimumLength = 12, ErrorMessage = "Password must be between 12 and 100 characters long.")]
             public string Password { get; set; }
         }
 
